@@ -2,487 +2,812 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>Notes Download Site</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>NoteStore - Download Study Notes</title>
 <style>
-  /* Reset & Base */
+  /* Reset and base */
   * {
     box-sizing: border-box;
-    user-select: none;
-  }
-  html, body {
-    margin: 0; padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f7f9fc;
-    color: #2c3e50;
-    max-width: 350px;
-    height: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    flex-direction: column;
   }
   body {
-    overflow: hidden;
-  }
-  header {
-    flex: 0 0 48px;
-    background: #2980b9;
-    color: white;
-    font-weight: 700;
-    font-size: 1.3rem;
-    text-align: center;
-    line-height: 48px;
-    user-select:none;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff;
+    color: #111;
+    display: flex;
+    flex-direction: column;
+    min-height: 600px;
+    max-width: 100vw;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
-  /* Category menu bar */
-  #categoryMenu {
-    flex: 0 0 44px;
+  /* Header */
+  header {
+    background-color: #111;
+    color: white;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1200;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  /* Hamburger icon */
+  #hamburgerBtn {
+    width: 32px;
+    height: 28px;
+    cursor: pointer;
+    position: relative;
+    border: none;
+    background: none;
+    margin-right: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 0;
+  }
+  #hamburgerBtn span {
+    display: block;
+    width: 28px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+  #hamburgerBtn.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  #hamburgerBtn.open span:nth-child(2) {
+    opacity: 0;
+  }
+  #hamburgerBtn.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+  }
+  /* Search bar container */
+  #searchContainer {
+    flex-grow: 1;
+    margin-left: 0.5rem;
+  }
+  #searchBar {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 24px;
+    border: none;
+    outline: none;
+    background: #222;
+    color: white;
+    user-select: none;
+  }
+  #searchBar::placeholder {
+    color: #aaa;
+  }
+  #searchBar:focus {
+    background: #333;
+  }
+
+  /* Profile icon placeholder */
+  #profileIcon {
+    width: 36px;
+    height: 36px;
+    background: #444;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    user-select: none;
+  }
+  #profileIcon svg {
+    fill: white;
+    width: 20px;
+    height: 20px;
+  }
+  #profileIcon:hover,
+  #profileIcon:focus {
+    background: #666;
+    outline: none;
+  }
+
+  /* Category tabs */
+  nav {
+    background: #fafafa;
+    padding: 0.3rem 0.4rem;
     display: flex;
     overflow-x: auto;
-    background: white;
-    box-shadow: 0 2px 7px rgba(0,0,0,0.1);
+    border-bottom: 1px solid #ddd;
+    user-select: none;
   }
-  #categoryMenu button {
-    flex: 0 0 auto;
-    border: none;
+  nav button {
     background: transparent;
-    padding: 8px 14px;
-    font-weight: 600;
-    font-size: 0.88rem;
-    color: #34495e;
-    border-bottom: 3px solid transparent;
+    border: none;
+    padding: 0.45rem 1rem;
+    margin: 0 0.3rem;
+    border-radius: 48px;
     cursor: pointer;
-    transition: border-color 0.3s ease, color 0.3s ease;
+    font-weight: 600;
+    color: #333;
+    transition: background-color 0.25s ease, color 0.25s ease;
     white-space: nowrap;
+    flex-shrink: 0;
   }
-  #categoryMenu button.active {
-    border-bottom-color: #2980b9;
-    color: #2980b9;
-    font-weight: 700;
-  }
-  #categoryMenu button:focus {
-    outline: none;
-    background: #ecf3fb;
+  nav button.active,
+  nav button:hover {
+    background-color: #111;
+    color: white;
   }
 
-  /* Search bar */
-  #searchContainer {
-    flex: 0 0 54px;
-    padding: 7px 14px;
-    background: white;
-    box-shadow: 0 2px 7px rgba(0,0,0,0.1);
+  /* Sort options */
+  #sortOptions {
+    margin: 0.7rem 1.1rem 0.8rem 1.1rem;
+    display: flex;
+    justify-content: flex-end;
+    user-select: none;
   }
-  #searchInput {
-    width: 100%;
-    padding: 10px 15px;
-    font-size: 1rem;
-    border: 2px solid #2980b9;
-    border-radius: 30px;
+  #sortOptions label {
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+    color: #555;
+    line-height: 1.9;
+  }
+  #sortOptions select {
+    border-radius: 16px;
+    border: 1.5px solid #444;
+    padding: 0.4rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    background: #fafafa;
+    color: #111;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  #sortOptions select:hover,
+  #sortOptions select:focus {
+    background: #111;
+    color: #fff;
+    border-color: #111;
     outline: none;
-    transition: border-color 0.3s ease;
-  }
-  #searchInput:focus {
-    border-color: #1c5f9e;
   }
 
-  /* Container for notes list and preview */
-  #contentWrapper {
-    flex: 1 1 auto;
+  main {
+    flex: 1 0 auto;
+    overflow-y: auto;
+    padding: 0 1rem 1.25rem 1rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1rem 1rem;
+  }
+
+  .note-card {
+    background: #fafafa;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
     display: flex;
     flex-direction: column;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-    border-radius: 0 0 10px 10px;
-    overflow: hidden;
-  }
-
-  /* Notes list */
-  #notesList {
-    flex: 1 1 auto;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    overflow-y: auto;
-  }
-  #notesList li {
-    padding: 14px 20px;
-    border-bottom: 1px solid #ddd;
+    padding: 1rem;
     cursor: pointer;
-    transition: background-color 0.25s ease;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    user-select: none;
   }
-  #notesList li:last-child {
-    border-bottom: none;
-  }
-  #notesList li:hover {
-    background-color: #ecf3fb;
-  }
-  #notesList li.selected {
-    background-color: #d6e7fc;
-    border-left: 5px solid #2980b9;
-    font-weight: 700;
+  .note-card:hover,
+  .note-card:focus {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    background-color: #eee;
+    outline: none;
   }
   .note-title {
-    font-size: 1.05rem;
-    color: #2c3e50;
-    margin-bottom: 4px;
-  }
-  .note-description {
-    font-size: 0.87rem;
-    color: #6c7a89;
-    line-height: 1.2;
-  }
-
-  /* Preview panel */
-  #previewPanel {
-    flex: 0 0 160px;
-    background: #fafafa;
-    padding: 16px 20px;
-    box-shadow: inset 0 1px 4px rgba(0,0,0,0.06);
-    border-top: 1px solid #ddd;
-    user-select: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  #previewPanel.hide {
-    display: none;
-  }
-  #previewTitle {
-    font-weight: 800;
-    font-size: 1.25rem;
-    margin-bottom: 8px;
-    color: #2c3e50;
-  }
-  #previewDescription {
-    font-size: 1rem;
-    color: #555;
-    flex: 1;
-    margin-bottom: 14px;
-    overflow-y: auto;
-  }
-
-  #downloadBtn {
-    background: #2980b9;
-    color: white;
     font-weight: 700;
-    border: none;
-    border-radius: 30px;
-    padding: 12px;
-    font-size: 1.1rem;
-    width: 100%;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(41,128,185,0.7);
-    position: relative;
+    font-size: 1.2rem;
+    margin: 0 0 0.4rem 0;
+    flex-grow: 1;
+    color: #111;
+    user-select: text;
+  }
+  .note-desc {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.8rem;
+    height: 54px;
     overflow: hidden;
+    user-select: text;
   }
-  #downloadBtn:disabled {
-    background: #7f8c8d;
-    cursor: default;
-    box-shadow: none;
-  }
-
-  #downloadBtn .progress-bar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    background: rgba(255,255,255,0.3);
-    width: 0%;
-    border-radius: 30px;
-    transition: width 0.25s ease;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  #downloadBtn span.btn-text {
-    position: relative;
-    z-index: 2;
-  }
-
-  footer {
-    flex: 0 0 36px;
-    padding: 8px 0;
-    text-align: center;
+  .note-info {
     font-size: 0.85rem;
-    color: #7f8c8d;
-    background: #ecf0f1;
-    user-select:none;
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+    user-select: none;
   }
-
-  /* Scrollbar style for notes list */
-  #notesList::-webkit-scrollbar {
+  .rating-stars {
+    color: #222;
+    font-size: 1rem;
+    user-select: none;
+    letter-spacing: 1px;
+  }
+  .download-btn {
+    background-color: #111;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 0.55rem 0.8rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  .download-btn:hover,
+  .download-btn:focus {
+    background-color: #444;
+    outline: none;
+  }
+  /* Scrollbar for main */
+  main::-webkit-scrollbar {
     width: 7px;
   }
-  #notesList::-webkit-scrollbar-thumb {
-    background-color: #2980b9aa;
-    border-radius: 10px;
+  main::-webkit-scrollbar-thumb {
+    background-color: rgba(51,51,51,0.4);
+    border-radius: 4px;
   }
-  #notesList::-webkit-scrollbar-track {
-    background: #e6e6e6;
+  main::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  /* Modal preview overlay */
+  #previewOverlay {
+    position: fixed;
+    top: 0; left: 0; right:0; bottom:0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    z-index: 1400;
+  }
+  #previewOverlay.active {
+    display: flex;
+  }
+  #previewContent {
+    background: #fff;
+    color: #111;
+    max-width: 640px;
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #previewHeader {
+    padding: 1rem 1.5rem;
+    background: #111;
+    color: #f5f5f5;
+    font-size: 1.4rem;
+    font-weight: 700;
+    user-select: none;
+  }
+  #previewBody {
+    flex: 1 1 auto;
+    padding: 1rem 1.5rem;
+    overflow-y: auto;
+  }
+  #previewDesc {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.4;
+  }
+  #previewMeta {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  #previewMeta div, #previewMeta .rating-stars {
+    user-select: none;
+  }
+  #previewDownloadBtn {
+    background-color: #111;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    align-self: center;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.3s ease;
+  }
+  #previewDownloadBtn:hover,
+  #previewDownloadBtn:focus {
+    background-color: #444;
+    outline: none;
+  }
+  #previewCloseBtn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    color: #eee;
+    font-size: 2rem;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+  }
+  #previewCloseBtn:hover,
+  #previewCloseBtn:focus {
+    color: #fff;
+    outline: none;
+  }
+
+  /* Responsive adjustments */
+
+  @media (max-width: 400px) {
+    #searchBar {
+      font-size: 0.95rem;
+      padding: 0.45rem 1rem;
+    }
+    #sortOptions {
+      margin: 0.65rem 1rem 0.9rem 1rem;
+    }
+    main {
+      padding: 0 0.75rem 1.25rem 0.75rem;
+    }
+    .notes-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem 0.5rem;
+    }
+    #previewContent {
+      max-width: 95vw;
+      max-height: 85vh;
+      border-radius: 12px;
+    }
+    #previewBody {
+      padding: 0.8rem 1rem;
+    }
+    #previewDownloadBtn {
+      width: 100%;
+      padding: 0.9rem 0;
+      font-size: 1.2rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+  }
+  @media (min-width: 601px) and (max-width: 1000px) {
+    .notes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    #searchBar {
+      font-size: 1.1rem;
+      padding: 0.65rem 1.2rem;
+    }
+  }
+  @media (min-width: 1001px) {
+    .notes-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    body {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
   }
 </style>
 </head>
 <body>
-
-<header>Notes Download Site</header>
-
-<nav id="categoryMenu" role="tablist" aria-label="Note Categories" tabindex="0">
-  <!-- Dynamic categories go here -->
+<header>
+  <button id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sideMenu" title="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div id="searchContainer">
+    <input id="searchBar" type="search" placeholder="Search notes... (title, category, description)" aria-label="Search notes" />
+  </div>
+  <div id="profileIcon" tabindex="0" title="User Account" aria-label="User account">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4 -1.79 4 -4s-1.79 -4 -4 -4 -4 1.79 -4 4 1.79 4 4 4zm0 2c-2.67 0 -8 1.34 -8 4v2h16v-2c0 -2.66 -5.33 -4 -8 -4z"></path></svg>
+  </div>
+</header>
+<nav aria-label="Categories" id="categoryTabs">
+  <button class="active" data-category="all" aria-pressed="true">All</button>
+  <button data-category="Mathematics">Mathematics</button>
+  <button data-category="Physics">Physics</button>
+  <button data-category="Chemistry">Chemistry</button>
+  <button data-category="Biology">Biology</button>
+  <button data-category="Computer Science">Computer Science</button>
+  <button data-category="History">History</button>
+  <button data-category="Literature">Literature</button>
+  <button data-category="Economics">Economics</button>
 </nav>
-
-<section id="searchContainer">
-  <input type="search" id="searchInput" placeholder="Search notes..." aria-label="Search notes" autocomplete="off" />
+<section id="sortOptions" aria-label="Sort notes">
+  <label for="sortSelect">Sort by:</label>
+  <select id="sortSelect" aria-controls="notesList" aria-label="Sort notes">
+    <option value="relevance">Relevance</option>
+    <option value="rating">Rating</option>
+    <option value="downloads">Downloads</option>
+    <option value="title">Title</option>
+  </select>
 </section>
+<main>
+  <div id="notesList" class="notes-grid" aria-live="polite" role="list">
+    <!-- Note cards injected by JS -->
+  </div>
+</main>
 
-<div id="contentWrapper">
-  <ul id="notesList" role="list" aria-label="Notes list" tabindex="0">
-    <!-- Notes dynamically inserted here -->
-  </ul>
-
-  <section id="previewPanel" class="hide" aria-live="polite" aria-atomic="true" tabindex="0">
-    <h2 id="previewTitle"></h2>
-    <p id="previewDescription"></p>
-    <button id="downloadBtn" aria-label="Download selected note">
-      <div class="progress-bar"></div>
-      <span class="btn-text">Download</span>
-    </button>
-  </section>
+<!-- Modal preview overlay -->
+<div id="previewOverlay" role="dialog" aria-modal="true" aria-labelledby="previewHeader" tabindex="-1">
+  <div id="previewContent">
+    <button id="previewCloseBtn" aria-label="Close preview dialog">&times;</button>
+    <header id="previewHeader"></header>
+    <section id="previewBody" tabindex="0">
+      <p id="previewDesc"></p>
+      <div id="previewMeta">
+        <div class="rating-stars"></div>
+        <div class="downloads"></div>
+      </div>
+      <div id="previewTextPreview" style="background:#f9f9f9; color:#222; border-radius: 8px; padding: 1rem; font-family: monospace, monospace; white-space: pre-wrap; max-height: 240px; overflow-y: auto; user-select: text;">
+        <!-- Preview content -->
+      </div>
+    </section>
+    <button id="previewDownloadBtn">Download</button>
+  </div>
 </div>
 
-<footer>&copy; 2024 Notes Download Site. All rights reserved.</footer>
-
 <script>
-  // Notes data array
-  const notes = [
+  // Sample notes data
+  const notesData = [
     {
       id: 1,
+      title: "Calculus 101 - Differential Calculus",
       category: "Mathematics",
-      title: "Calculus Basics",
-      description: "Summarized notes covering derivatives and integrals.",
-      downloadUrl: "https://example.com/notes/calculus-basics.pdf"
+      description: "An introductory guide to differential calculus covering limits, derivatives, and applications.",
+      rating: 4.5,
+      downloads: 1500,
+      fileUrl: "sample-notes/calculus-101.pdf",
+      previewText: \`Calculus 101 - Differential Calculus\n\nIntroduction:\nDifferential calculus deals with the study of... [sample content]\n\nKey topics:\n- Limits\n- Continuity\n- Derivatives\n- Application of derivatives\`
     },
     {
       id: 2,
+      title: "Physics: Mechanics Fundamentals",
       category: "Physics",
-      title: "Classical Mechanics",
-      description: "Key formulas and concepts in mechanics.",
-      downloadUrl: "https://example.com/notes/ph-classical-mechanics.pdf"
+      description: "Comprehensive notes on Newtonian mechanics including laws, forces, and motion.",
+      rating: 4.7,
+      downloads: 1800,
+      fileUrl: "sample-notes/physics-mechanics.pdf",
+      previewText: \`Physics: Mechanics Fundamentals\n\nNewton's Laws:\n1. Law of Inertia\n2. F=ma\n3. Action and Reaction\n\nMotion:\n- Velocity\n- Acceleration\n- Circular motion\`
     },
     {
       id: 3,
+      title: "Organic Chemistry Basics",
       category: "Chemistry",
-      title: "Organic Chemistry Overview",
-      description: "Important reactions and mechanisms.",
-      downloadUrl: "https://example.com/notes/organic-chemistry.pdf"
+      description: "Basic principles of organic chemistry focusing on hydrocarbons and functional groups.",
+      rating: 4.1,
+      downloads: 900,
+      fileUrl: "sample-notes/organic-chemistry.pdf",
+      previewText: \`Organic Chemistry Basics\n\nOverview:\nHydrocarbons are organic compounds consisting entirely of hydrogen and carbon.\nFunctional Groups include:\n- Alcohols\n- Aldehydes\n- Ketones\`
     },
     {
       id: 4,
-      category: "History",
-      title: "World War II Summary",
-      description: "Timeline and key events of WWII.",
-      downloadUrl: "https://example.com/notes/ww2-summary.pdf"
+      title: "Introduction to Programming with Python",
+      category: "Computer Science",
+      description: "Beginner-friendly notes about Python programming and fundamental concepts of coding.",
+      rating: 4.8,
+      downloads: 2200,
+      fileUrl: "sample-notes/python-programming.pdf",
+      previewText: \`Intro to Python Programming\n\nTopics:\n- Variables and Data Types\n- Control Structures\n- Functions\n- Modules and Packages\`
     },
     {
       id: 5,
-      category: "English Literature",
-      title: "Shakespeare's Plays",
-      description: "Analysis and summaries of major plays.",
-      downloadUrl: "https://example.com/notes/shakespeare-plays.pdf"
+      title: "World History: Medieval Times",
+      category: "History",
+      description: "Detailed overview of key events and figures from the medieval period around the world.",
+      rating: 4.3,
+      downloads: 700,
+      fileUrl: "sample-notes/medieval-history.pdf",
+      previewText: \`World History: Medieval Times\n\nKey Topics:\n- Feudalism\n- The Crusades\n- Black Death\n- Renaissance beginnings\`
     },
     {
       id: 6,
-      category: "Mathematics",
-      title: "Algebra Essentials",
-      description: "Basic algebraic operations and equations.",
-      downloadUrl: "https://example.com/notes/algebra-essentials.pdf"
+      title: "Macroeconomics Principles",
+      category: "Economics",
+      description: "Core ideas and models explaining national economic aggregates and policy impacts.",
+      rating: 4.0,
+      downloads: 600,
+      fileUrl: "sample-notes/macroeconomics.pdf",
+      previewText: \`Macroeconomics Principles\n\nIncludes:\n- GDP\n- Inflation\n- Fiscal and Monetary Policy\n- Unemployment\`
     },
     {
       id: 7,
-      category: "Physics",
-      title: "Electromagnetism",
-      description: "Fundamentals of electric and magnetic fields.",
-      downloadUrl: "https://example.com/notes/electromagnetism.pdf"
+      title: "Cell Biology Overview",
+      category: "Biology",
+      description: "Notes covering cell structure, organelles, and important biological processes.",
+      rating: 4.6,
+      downloads: 1200,
+      fileUrl: "sample-notes/cell-biology.pdf",
+      previewText: \`Cell Biology Overview\n\nTopics:\n- Cell membrane\n- Nucleus\n- Mitochondria\n- Photosynthesis\`
+    },
+    {
+      id: 8,
+      title: "Literature Analysis: Modern Novels",
+      category: "Literature",
+      description: "Critical summaries and reviews of major modern novels and authors.",
+      rating: 4.4,
+      downloads: 500,
+      fileUrl: "sample-notes/modern-literature.pdf",
+      previewText: \`Literature Analysis: Modern Novels\n\nAnalyzed novels:\n- 1984\n- The Great Gatsby\n- To Kill a Mockingbird\`
+    },
+    {
+      id: 9,
+      title: "Chemical Bonding Concepts",
+      category: "Chemistry",
+      description: "Detailed notes about ionic, covalent, and metallic bonding explained with examples.",
+      rating: 4.2,
+      downloads: 1100,
+      fileUrl: "sample-notes/chemical-bonding.pdf",
+      previewText: \`Chemical Bonding Concepts\n\n- Ionic Bonds\n- Covalent Bonds\n- Metallic Bonds\nExamples included.\`
+    },
+    {
+      id: 10,
+      title: "Advanced Algebra Techniques",
+      category: "Mathematics",
+      description: "Notes on polynomial equations, factorization, and complex numbers.",
+      rating: 4.3,
+      downloads: 1450,
+      fileUrl: "sample-notes/advanced-algebra.pdf",
+      previewText: \`Advanced Algebra Techniques\n\n- Polynomial equations\n- Factorization\n- Complex numbers\nExercises included.\`
     }
   ];
 
-  const categories = [...new Set(notes.map(note => note.category))];
-
-  // Elements
-  const categoryMenu = document.getElementById('categoryMenu');
-  const searchInput = document.getElementById('searchInput');
-  const notesList = document.getElementById('notesList');
-  const previewPanel = document.getElementById('previewPanel');
-  const previewTitle = document.getElementById('previewTitle');
-  const previewDescription = document.getElementById('previewDescription');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const progressBar = downloadBtn.querySelector('.progress-bar');
-  const btnText = downloadBtn.querySelector('.btn-text');
-
-  // State variables
-  let selectedCategory = categories[0];
-  let selectedNoteId = null;
-  let downloadInProgress = false;
-
-  // Render category buttons
-  function renderCategories() {
-    categoryMenu.innerHTML = '';
-    categories.forEach(category => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = category;
-      btn.classList.toggle('active', category === selectedCategory);
-      btn.setAttribute('role', 'tab');
-      btn.setAttribute('aria-selected', category === selectedCategory ? 'true' : 'false');
-      btn.addEventListener('click', () => {
-        if (downloadInProgress) return;
-        selectedCategory = category;
-        selectedNoteId = null;
-        searchInput.value = '';
-        renderCategories();
-        renderNotes();
-        clearPreview();
-      });
-      categoryMenu.appendChild(btn);
-    });
+  // Utilities for ratings
+  function createStarRating(rating) {
+    let fullStars = Math.floor(rating);
+    let halfStar = rating % 1 >= 0.5 ? true : false;
+    const maxStars = 5;
+    let starHtml = '';
+    for (let i = 0; i < fullStars; i++) {
+      starHtml += '<span aria-hidden="true">★</span>';
+    }
+    if (halfStar) {
+      starHtml += '<span aria-hidden="true">☆</span>';
+      fullStars++;
+    }
+    for (let i = fullStars; i < maxStars; i++) {
+      starHtml += '<span aria-hidden="true">☆</span>';
+    }
+    return starHtml;
   }
 
-  // Filter notes by category and search
-  function filterNotes() {
-    const q = searchInput.value.trim().toLowerCase();
-    return notes.filter(note => {
-      return note.category === selectedCategory &&
-        (note.title.toLowerCase().includes(q) || note.description.toLowerCase().includes(q));
-    });
+  // DOM references
+  const notesList = document.getElementById('notesList');
+  const searchBar = document.getElementById('searchBar');
+  const sortSelect = document.getElementById('sortSelect');
+  const categoryTabs = document.getElementById('categoryTabs').querySelectorAll('button');
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+
+  // Preview references
+  const previewOverlay = document.getElementById('previewOverlay');
+  const previewHeader = document.getElementById('previewHeader');
+  const previewDesc = document.getElementById('previewDesc');
+  const previewMeta = document.getElementById('previewMeta');
+  const previewStars = previewMeta.querySelector('.rating-stars');
+  const previewDownloads = previewMeta.querySelector('.downloads');
+  const previewTextPreview = document.getElementById('previewTextPreview');
+  const previewDownloadBtn = document.getElementById('previewDownloadBtn');
+  const previewCloseBtn = document.getElementById('previewCloseBtn');
+
+  // State
+  let currentCategory = 'all';
+  let currentSearchTerm = '';
+  let currentSort = 'relevance';
+  let currentPreviewNote = null;
+  let isMenuOpen = false;
+
+  // Filtering and sorting
+  function filterAndSortNotes() {
+    let filtered = notesData;
+
+    // Filter by category
+    if (currentCategory !== 'all') {
+      filtered = filtered.filter(note => note.category === currentCategory);
+    }
+
+    // Filter by search term (title, category, description)
+    if (currentSearchTerm.trim() !== '') {
+      const searchLower = currentSearchTerm.toLowerCase();
+      filtered = filtered.filter(note =>
+        note.title.toLowerCase().includes(searchLower) ||
+        note.category.toLowerCase().includes(searchLower) ||
+        note.description.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Sort notes
+    switch (currentSort) {
+      case 'rating':
+        filtered = filtered.slice().sort((a, b) => b.rating - a.rating);
+        break;
+      case 'downloads':
+        filtered = filtered.slice().sort((a, b) => b.downloads - a.downloads);
+        break;
+      case 'title':
+        filtered = filtered.slice().sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      default: // relevance (default order)
+        // Keep original order for demo
+        break;
+    }
+
+    return filtered;
   }
 
   // Render notes list
   function renderNotes() {
-    notesList.innerHTML = '';
-    const filteredNotes = filterNotes();
-    if (filteredNotes.length === 0) {
-      const li = document.createElement('li');
-      li.textContent = 'No notes found.';
-      li.style.color = '#999';
-      li.style.textAlign = 'center';
-      notesList.appendChild(li);
-      clearPreview();
+    const notesToShow = filterAndSortNotes();
+
+    if (notesToShow.length === 0) {
+      notesList.innerHTML = \`<p style="text-align:center; color: #777;">No notes found matching your criteria.</p>\`;
       return;
     }
-    filteredNotes.forEach(note => {
-      const li = document.createElement('li');
-      li.setAttribute('role', 'listitem');
-      li.classList.toggle('selected', note.id === selectedNoteId);
-      li.tabIndex = 0;
 
-      const titleDiv = document.createElement('div');
-      titleDiv.className = 'note-title';
-      titleDiv.textContent = note.title;
+    const notesHtml = notesToShow.map(note => \`
+      <article tabindex="0" class="note-card" role="listitem" aria-label="\${note.title} note card" data-id="\${note.id}">
+        <h2 class="note-title">\${note.title}</h2>
+        <p class="note-desc">\${note.description}</p>
+        <div class="note-info">
+          <div class="rating-stars" aria-label="Rating: \${note.rating} out of 5">\${createStarRating(note.rating)}</div>
+          <div aria-label="\${note.downloads} downloads">\${note.downloads.toLocaleString()} ⬇</div>
+        </div>
+        <button class="download-btn" aria-label="Download \${note.title} notes" data-download-id="\${note.id}">Download</button>
+      </article>\`).join('');
+    notesList.innerHTML = notesHtml;
 
-      const descDiv = document.createElement('div');
-      descDiv.className = 'note-description';
-      descDiv.textContent = note.description;
-
-      li.appendChild(titleDiv);
-      li.appendChild(descDiv);
-
-      li.addEventListener('click', () => {
-        if (downloadInProgress) return;
-        if (selectedNoteId === note.id) return;
-        selectedNoteId = note.id;
-        renderNotes();
-        showPreview(note);
-      });
-      li.addEventListener('keypress', (e) => {
+    // Attach event listeners for preview and download on new elements
+    const noteCards = document.querySelectorAll('.note-card');
+    noteCards.forEach(card => {
+      card.onclick = (e) => {
+        // Prevent if clicked on download button inside the card
+       if (e.target.classList.contains('download-btn')) return;
+        const noteId = parseInt(card.getAttribute('data-id'), 10);
+        openPreview(noteId);
+      };
+      card.onkeydown = (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          li.click();
+          card.click();
         }
-      });
+      };
+    });
 
-      notesList.appendChild(li);
+    const downloadBtns = document.querySelectorAll('.download-btn');
+    downloadBtns.forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const downloadId = parseInt(btn.getAttribute('data-download-id'), 10);
+        downloadNote(downloadId);
+      };
     });
   }
 
-  // Show preview panel
-  function showPreview(note) {
-    previewTitle.textContent = note.title;
-    previewDescription.textContent = note.description;
-    previewPanel.classList.remove('hide');
-    resetDownloadBtn();
+  // Open preview modal
+  function openPreview(noteId) {
+    const note = notesData.find(n => n.id === noteId);
+    if (!note) return;
+    currentPreviewNote = note;
+    previewHeader.textContent = note.title;
+    previewDesc.textContent = note.description;
+    previewStars.innerHTML = createStarRating(note.rating);
+    previewStars.setAttribute('aria-label', \`Rating: \${note.rating} out of 5\`);
+    previewDownloads.textContent = \`\${note.downloads.toLocaleString()} downloads\`;
+    previewTextPreview.textContent = note.previewText || "Preview not available.";
+    previewDownloadBtn.focus();
+    previewOverlay.classList.add('active');
+
+    trapFocus(previewOverlay);
   }
 
-  // Hide preview panel
-  function clearPreview() {
-    previewPanel.classList.add('hide');
-    previewTitle.textContent = '';
-    previewDescription.textContent = '';
-    selectedNoteId = null;
-    resetDownloadBtn();
+  // Close preview modal
+  function closePreview() {
+    previewOverlay.classList.remove('active');
+    currentPreviewNote = null;
+    removeTrapFocus(previewOverlay);
+    searchBar.focus();
   }
 
-  // Reset download button
-  function resetDownloadBtn() {
-    downloadBtn.disabled = !selectedNoteId || downloadInProgress;
-    progressBar.style.width = '0%';
-    btnText.textContent = 'Download';
+  // Download note (simulate)
+  function downloadNote(id) {
+    const note = notesData.find(n => n.id === id);
+    if (!note) return;
+    alert(\`Starting download for:\\n"\${note.title}"\\nFile URL: \${note.fileUrl}\`);
   }
 
-  // Simulate download progress & trigger file download
-  async function downloadFile(url, filename) {
-    downloadBtn.disabled = true;
-    downloadInProgress = true;
-    btnText.textContent = 'Starting...';
-    progressBar.style.width = '0%';
+  // Trap focus inside modal for accessibility
+  function trapFocus(element) {
+    const focusablesString = 'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+    let focusableElements = element.querySelectorAll(focusablesString);
+    focusableElements = Array.prototype.slice.call(focusableElements);
+    if (focusableElements.length === 0) return;
+    let firstFocusable = focusableElements[0];
+    let lastFocusable = focusableElements[focusableElements.length - 1];
 
-    try {
-      for (let pct = 0; pct <= 100; pct += 5) {
-        await new Promise(r => setTimeout(r, 80));
-        progressBar.style.width = pct + '%';
-        btnText.textContent = `Downloading ${pct}%`;
+    function trap(e) {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
       }
-      // Initiate real file download
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      btnText.textContent = 'Download Complete';
-      progressBar.style.width = '100%';
-
-      await new Promise(r => setTimeout(r, 1500));
-    } catch (e) {
-      btnText.textContent = 'Download Failed';
-      progressBar.style.width = '0%';
-      alert('Download failed: ' + e);
-    } finally {
-      downloadBtn.disabled = false;
-      downloadInProgress = false;
+      else if (e.key === "Escape") {
+        closePreview();
+      }
+    }
+    element.addEventListener('keydown', trap);
+    element._trap = trap;
+  }
+  function removeTrapFocus(element) {
+    if (element._trap) {
+      element.removeEventListener('keydown', element._trap);
+      delete element._trap;
     }
   }
 
-  downloadBtn.addEventListener('click', () => {
-    if (!selectedNoteId || downloadInProgress) return;
-    const note = notes.find(n => n.id === selectedNoteId);
-    if (!note) return;
-    const filename = note.downloadUrl.split('/').pop() || note.title + '.pdf';
-    downloadFile(note.downloadUrl, filename);
+  // Category filter tabs event
+  categoryTabs.forEach(button => {
+    button.addEventListener('click', () => {
+      categoryTabs.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      });
+      button.classList.add('active');
+      button.setAttribute('aria-pressed', 'true');
+      currentCategory = button.getAttribute('data-category');
+      renderNotes();
+    });
   });
 
-  searchInput.addEventListener('input', () => {
-    if (downloadInProgress) return;
-    selectedNoteId = null;
+  // Search event
+  searchBar.addEventListener('input', e => {
+    currentSearchTerm = e.target.value;
     renderNotes();
-    clearPreview();
   });
 
-  // Initialize interface
-  renderCategories();
+  // Sort event
+  sortSelect.addEventListener('change', e => {
+    currentSort = e.target.value;
+    renderNotes();
+  });
+
+  // Preview close events
+  previewCloseBtn.addEventListener('click', closePreview);
+  previewOverlay.addEventListener('click', (e) => {
+    if (e.target === previewOverlay) {
+      closePreview();
+    }
+  });
+
+  // Initial render notes
   renderNotes();
 </script>
 </body>
 </html>
-
