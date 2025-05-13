@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>NoteStore - Download Study Notes</title>
+<title>NoteStore - Your Notes</title>
 <style>
-  /* Reset and base */
   * {
     box-sizing: border-box;
   }
@@ -22,16 +21,12 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
-
-  /* Header */
   header {
     background-color: #111;
     color: white;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1200;
+    top: 0; left: 0; right: 0;
+    z-index: 1300;
     box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
     display: flex;
     align-items: center;
@@ -40,13 +35,10 @@
     padding: 0.5rem 1rem;
     height: 52px;
   }
-
-  /* User icon container and dropdown */
   #userIconContainer {
     position: relative;
     flex-shrink: 0;
   }
-
   #profileIcon {
     width: 36px;
     height: 36px;
@@ -69,7 +61,6 @@
     background: #666;
     outline: none;
   }
-
   #userDropdown {
     position: absolute;
     top: 44px;
@@ -83,7 +74,7 @@
     display: none;
     flex-direction: column;
     user-select: none;
-    z-index: 1300;
+    z-index: 1400;
   }
   #userDropdown.show {
     display: flex;
@@ -110,11 +101,12 @@
     color: white;
     outline: none;
   }
-
-  /* Search input */
   #searchContainer {
     flex-grow: 1;
     height: 36px;
+    position: relative;
+    display: flex;
+    align-items: center;
   }
   #searchBar {
     width: 100%;
@@ -126,7 +118,6 @@
     outline: none;
     background: #222;
     color: white;
-    user-select: none;
   }
   #searchBar::placeholder {
     color: #aaa;
@@ -134,8 +125,30 @@
   #searchBar:focus {
     background: #333;
   }
-
-  /* Category tabs */
+  #addNoteBtn {
+    width: 40px;
+    height: 40px;
+    background: #111;
+    border-radius: 50%;
+    color: white;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 36px;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    margin-left: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+  }
+  #addNoteBtn:hover,
+  #addNoteBtn:focus {
+    background: #444;
+    outline: none;
+  }
   nav {
     background: #fafafa;
     padding: 0.3rem 0.4rem;
@@ -143,7 +156,7 @@
     overflow-x: auto;
     border-bottom: 1px solid #ddd;
     user-select: none;
-    margin-top: 52px; /* header height */
+    margin-top: 52px;
   }
   nav button {
     background: transparent;
@@ -163,8 +176,6 @@
     background-color: #111;
     color: white;
   }
-
-  /* Sort options and view toggle */
   #controls {
     margin: 0.7rem 1.1rem 0.8rem 1.1rem;
     display: flex;
@@ -196,7 +207,6 @@
     border-color: #111;
     outline: none;
   }
-
   #viewToggleBtn {
     background: #111;
     border: none;
@@ -222,8 +232,6 @@
     height: 18px;
     fill: white;
   }
-
-  /* Main content */
   main {
     flex: 1 0 auto;
     overflow-y: auto;
@@ -232,23 +240,18 @@
     margin-left: auto;
     margin-right: auto;
   }
-
-  /* Notes grid and list styles */
   #notesList.grid-view {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 1rem 1rem;
   }
-
   #notesList.list-view {
     display: block;
   }
-
-  /* Note cards grid style */
   .note-card.grid-item {
     background: #fafafa;
     border-radius: 12px;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -256,11 +259,10 @@
     transition: box-shadow 0.3s ease, background-color 0.3s ease;
     user-select: none;
   }
-  /* Note cards list style */
   .note-card.list-item {
     background: #fafafa;
     border-radius: 12px;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     padding: 0.9rem 1rem;
@@ -270,8 +272,6 @@
     user-select: none;
     width: 100%;
   }
-
-  /* Hover styles */
   .note-card.grid-item:hover,
   .note-card.list-item:hover,
   .note-card.grid-item:focus,
@@ -280,8 +280,6 @@
     background-color: #eee;
     outline: none;
   }
-
-  /* Title styling */
   .note-title {
     font-weight: 700;
     font-size: 1.2rem;
@@ -289,26 +287,20 @@
     color: #111;
     user-select: text;
   }
-
-  /* Description for grid or list */
   .note-desc {
     font-size: 0.9rem;
     color: #555;
     margin-bottom: 0.8rem;
     user-select: text;
   }
-  /* limit height in grid */
   .grid-item > .note-desc {
     height: 54px;
     overflow: hidden;
   }
-  /* in list mode, flexible desc */
   .list-item > .note-desc {
     margin-bottom: 0;
     flex-grow: 1;
   }
-
-  /* Note info (rating, downloads) */
   .note-info {
     font-size: 0.85rem;
     color: #444;
@@ -318,23 +310,25 @@
     margin-bottom: 0.6rem;
     user-select: none;
   }
-  /* In list mode, put info vertically */
   .list-item > .note-info {
     flex-direction: row;
     margin-bottom: 0;
     gap: 12px;
     min-width: 180px;
   }
-
   .rating-stars {
     color: #222;
     font-size: 1rem;
     user-select: none;
     letter-spacing: 1px;
   }
-
-  /* Download button */
-  .download-btn {
+  .buttons-row {
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  button.download-btn,
+  button.readnow-btn {
     background-color: #111;
     color: white;
     border: none;
@@ -348,16 +342,17 @@
     transition: background-color 0.3s ease;
     flex-shrink: 0;
   }
-  .download-btn:hover,
-  .download-btn:focus {
+  button.download-btn:hover,
+  button.readnow-btn:hover,
+  button.download-btn:focus,
+  button.readnow-btn:focus {
     background-color: #444;
     outline: none;
   }
-
-  /* List mode arrange children horizontally */
   .list-item > .note-title,
   .list-item > .note-desc,
-  .list-item > .note-info {
+  .list-item > .note-info,
+  .list-item > .buttons-row {
     flex-grow: 0;
   }
   .list-item > .note-title {
@@ -366,20 +361,6 @@
   .list-item > .note-desc {
     width: 360px;
   }
-
-  /* Scrollbar for main */
-  main::-webkit-scrollbar {
-    width: 7px;
-  }
-  main::-webkit-scrollbar-thumb {
-    background-color: rgba(51,51,51,0.4);
-    border-radius: 4px;
-  }
-  main::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  /* Modal preview overlay */
   #previewOverlay {
     position: fixed;
     top: 0; left: 0; right:0; bottom:0;
@@ -388,7 +369,7 @@
     justify-content: center;
     align-items: center;
     padding: 1rem;
-    z-index: 1400;
+    z-index: 1500;
   }
   #previewOverlay.active {
     display: flex;
@@ -404,6 +385,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
   }
   #previewHeader {
     padding: 1rem 1.5rem;
@@ -417,40 +399,10 @@
     flex: 1 1 auto;
     padding: 1rem 1.5rem;
     overflow-y: auto;
-  }
-  #previewDesc {
-    margin-bottom: 1rem;
+    white-space: pre-wrap;
+    font-family: monospace, monospace;
     font-size: 1rem;
-    color: #333;
-    line-height: 1.4;
-  }
-  #previewMeta {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-  }
-  #previewMeta div, #previewMeta .rating-stars {
-    user-select: none;
-  }
-  #previewDownloadBtn {
-    background-color: #111;
-    color: white;
-    border: none;
-    border-radius: 24px;
-    padding: 0.75rem 1.25rem;
-    font-weight: 700;
-    font-size: 1.1rem;
-    cursor: pointer;
-    align-self: center;
-    margin-bottom: 1.5rem;
-    transition: background-color 0.3s ease;
-  }
-  #previewDownloadBtn:hover,
-  #previewDownloadBtn:focus {
-    background-color: #444;
-    outline: none;
+    color: #222;
   }
   #previewCloseBtn {
     position: absolute;
@@ -469,87 +421,123 @@
     color: #fff;
     outline: none;
   }
-
-  /* Responsive adjustments */
-
-  @media (max-width: 400px) {
+  #addNoteModalBack {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    z-index: 1400;
+  }
+  #addNoteModalBack.active {
+    display: flex;
+  }
+  #addNoteModal {
+    background: #fff;
+    color: #111;
+    max-width: 440px;
+    width: 100%;
+    padding: 1.5rem 2rem 2rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    position: relative;
+    user-select: text;
+    display: flex;
+    flex-direction: column;
+  }
+  #addNoteModal header {
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    user-select: none;
+  }
+  #closeAddNoteBtn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+  }
+  #closeAddNoteBtn:hover,
+  #closeAddNoteBtn:focus {
+    color: #111;
+    outline: none;
+  }
+  form label {
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+  form input[type=text],
+  form input[type=number],
+  form select,
+  form textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #ccc;
+    resize: vertical;
+    font-family: inherit;
+  }
+  form textarea {
+    min-height: 120px;
+  }
+  form input[type=number]::-webkit-inner-spin-button,
+  form input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  #saveNoteBtn {
+    margin-top: 1.75rem;
+    padding: 0.65rem 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: #111;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  #saveNoteBtn:hover,
+  #saveNoteBtn:focus {
+    background: #444;
+    outline: none;
+  }
+  @media (max-width: 480px) {
+    #addNoteModal {
+      max-width: 95vw;
+      padding: 1rem 1.25rem 1.5rem 1.25rem;
+    }
     header {
-      gap: 0.4rem;
-      padding: 0.4rem 0.6rem 0.4rem 0.6rem;
-      height: 44px;
+      height: 48px;
+      padding: 0.35rem 0.75rem;
+    }
+    #profileIcon {
+      width: 32px;
+      height: 32px;
     }
     #searchBar {
-      font-size: 0.95rem;
-      padding: 0.35rem 0.9rem;
+      height: 32px;
+      font-size: 0.9rem;
     }
     #sortSelect {
-      font-size: 0.92rem;
-      padding: 0.32rem 0.8rem;
+      font-size: 0.9rem;
+      padding: 0.35rem 0.75rem;
     }
     #viewToggleBtn {
       font-size: 0.9rem;
-      padding: 0.38rem 0.9rem;
-    }
-    #sortOptions {
-      margin: 0.65rem 1rem 0.9rem 1rem;
-      gap: 0.5rem;
-    }
-    main {
-      padding: 0 0.75rem 1.25rem 0.75rem;
-    }
-    .notes-grid.grid-view {
-      grid-template-columns: 1fr;
-      gap: 1rem 0.5rem;
-    }
-    .note-card.grid-item {
-      padding: 0.8rem;
-    }
-    .note-card.list-item {
-      flex-direction: column;
-      gap: 0.25rem;
-      align-items: flex-start;
-    }
-    .list-item > .note-title,
-    .list-item > .note-desc,
-    .list-item > .note-info {
-      width: 100%;
-    }
-    #previewContent {
-      max-width: 95vw;
-      max-height: 85vh;
-      border-radius: 12px;
-    }
-    #previewBody {
-      padding: 0.8rem 1rem;
-    }
-    #previewDownloadBtn {
-      width: 100%;
-      padding: 0.9rem 0;
-      font-size: 1.1rem;
-      border-radius: 16px;
-      margin-bottom: 1rem;
-    }
-  }
-  @media (min-width: 601px) and (max-width: 1000px) {
-    .notes-grid.grid-view {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    #searchBar {
-      font-size: 1.1rem;
-      padding: 0.65rem 1.2rem;
-    }
-    #sortSelect {
-      font-size: 1rem;
-      padding: 0.4rem 1rem;
-    }
-  }
-  @media (min-width: 1001px) {
-    .notes-grid.grid-view {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    body {
-      max-width: 1200px;
-      margin: 0 auto;
+      padding: 0.38rem 0.75rem;
     }
   }
 </style>
@@ -567,7 +555,8 @@
     </div>
   </div>
   <div id="searchContainer">
-    <input id="searchBar" type="search" placeholder="Search notes... (title, category, description)" aria-label="Search notes" />
+    <input id="searchBar" type="search" placeholder="Search by topic or author..." aria-label="Search notes" autocomplete="off" />
+    <button aria-label="Add new note" id="addNoteBtn" title="Add new note">+</button>
   </div>
 </header>
 <nav aria-label="Categories" id="categoryTabs">
@@ -580,14 +569,15 @@
   <button data-category="History">History</button>
   <button data-category="Literature">Literature</button>
   <button data-category="Economics">Economics</button>
+  <button data-category="Others">Others</button>
 </nav>
 <section id="controls" aria-label="Controls">
   <div id="sortOptions">
     <label for="sortSelect">Sort by:</label>
     <select id="sortSelect" aria-controls="notesList" aria-label="Sort notes">
-      <option value="relevance">Relevance</option>
+      <option value="relevance" selected>Relevance</option>
       <option value="rating">Rating</option>
-      <option value="downloads">Downloads</option>
+      <option value="author">Author</option>
       <option value="title">Title</option>
     </select>
   </div>
@@ -597,428 +587,368 @@
   </button>
 </section>
 <main>
-  <div id="notesList" class="grid-view" aria-live="polite" role="list" aria-label="List of study notes">
-    <!-- Note cards injected by JS -->
+  <div id="notesList" class="grid-view" aria-live="polite" role="list" aria-label="List of your notes">
   </div>
 </main>
 
-<!-- Modal preview overlay -->
 <div id="previewOverlay" role="dialog" aria-modal="true" aria-labelledby="previewHeader" tabindex="-1">
   <div id="previewContent">
-    <button id="previewCloseBtn" aria-label="Close preview dialog">&times;</button>
+    <button id="previewCloseBtn" aria-label="Close reading view">&times;</button>
     <header id="previewHeader"></header>
-    <section id="previewBody" tabindex="0">
-      <p id="previewDesc"></p>
-      <div id="previewMeta">
-        <div class="rating-stars"></div>
-        <div class="downloads"></div>
-      </div>
-      <div id="previewTextPreview" style="background:#f9f9f9; color:#222; border-radius: 8px; padding: 1rem; font-family: monospace, monospace; white-space: pre-wrap; max-height: 240px; overflow-y: auto; user-select: text;">
-        <!-- Preview content -->
-      </div>
-    </section>
-    <button id="previewDownloadBtn">Download</button>
+    <section id="previewBody" tabindex="0"></section>
+  </div>
+</div>
+
+<div id="addNoteModalBack" aria-hidden="true">
+  <div id="addNoteModal" role="dialog" aria-modal="true" aria-labelledby="addNoteTitle" tabindex="-1">
+    <button id="closeAddNoteBtn" aria-label="Close add note form">&times;</button>
+    <header id="addNoteTitle">Add New Note</header>
+    <form id="addNoteForm" novalidate>
+      <label for="topicInput">Topic Name <sup>*</sup></label>
+      <input type="text" id="topicInput" name="topic" required placeholder="Enter topic name" autocomplete="off" />
+      <label for="authorInput">Author Name <sup>*</sup></label>
+      <input type="text" id="authorInput" name="author" required placeholder="Enter author name" autocomplete="off" />
+      <label for="categoryInput">Category <sup>*</sup></label>
+      <select id="categoryInput" name="category" required aria-required="true">
+        <option value="" disabled selected>Select category</option>
+        <option value="Mathematics">Mathematics</option>
+        <option value="Physics">Physics</option>
+        <option value="Chemistry">Chemistry</option>
+        <option value="Biology">Biology</option>
+        <option value="Computer Science">Computer Science</option>
+        <option value="History">History</option>
+        <option value="Literature">Literature</option>
+        <option value="Economics">Economics</option>
+        <option value="Others">Others</option>
+      </select>
+      <label for="ratingInput">Rating (1 to 5) <sup>*</sup></label>
+      <input type="number" step="0.1" id="ratingInput" name="rating" required min="1" max="5" placeholder="Enter rating (e.g., 4.5)" />
+      <label for="contentInput">Note Content <sup>*</sup></label>
+      <textarea id="contentInput" name="content" required placeholder="Enter full note content here"></textarea>
+      <button type="submit" id="saveNoteBtn">Save</button>
+    </form>
   </div>
 </div>
 
 <script>
-  // Sample notes data
-  const notesData = [
-    {
-      id: 1,
-      title: "Calculus 101 - Differential Calculus",
-      category: "Mathematics",
-      description: "An introductory guide to differential calculus covering limits, derivatives, and applications.",
-      rating: 4.5,
-      downloads: 1500,
-      fileUrl: "sample-notes/calculus-101.pdf",
-      previewText: "Calculus 101 - Differential Calculus\n\nIntroduction:\nDifferential calculus deals with the study of... [sample content]\n\nKey topics:\n- Limits\n- Continuity\n- Derivatives\n- Application of derivatives"
-    },
-    {
-      id: 2,
-      title: "Physics: Mechanics Fundamentals",
-      category: "Physics",
-      description: "Comprehensive notes on Newtonian mechanics including laws, forces, and motion.",
-      rating: 4.7,
-      downloads: 1800,
-      fileUrl: "sample-notes/physics-mechanics.pdf",
-      previewText: "Physics: Mechanics Fundamentals\n\nNewton's Laws:\n1. Law of Inertia\n2. F=ma\n3. Action and Reaction\n\nMotion:\n- Velocity\n- Acceleration\n- Circular motion"
-    },
-    {
-      id: 3,
-      title: "Organic Chemistry Basics",
-      category: "Chemistry",
-      description: "Basic principles of organic chemistry focusing on hydrocarbons and functional groups.",
-      rating: 4.1,
-      downloads: 900,
-      fileUrl: "sample-notes/organic-chemistry.pdf",
-      previewText: "Organic Chemistry Basics\n\nOverview:\nHydrocarbons are organic compounds consisting entirely of hydrogen and carbon.\nFunctional Groups include:\n- Alcohols\n- Aldehydes\n- Ketones"
-    },
-    {
-      id: 4,
-      title: "Introduction to Programming with Python",
-      category: "Computer Science",
-      description: "Beginner-friendly notes about Python programming and fundamental concepts of coding.",
-      rating: 4.8,
-      downloads: 2200,
-      fileUrl: "sample-notes/python-programming.pdf",
-      previewText: "Intro to Python Programming\n\nTopics:\n- Variables and Data Types\n- Control Structures\n- Functions\n- Modules and Packages"
-    },
-    {
-      id: 5,
-      title: "World History: Medieval Times",
-      category: "History",
-      description: "Detailed overview of key events and figures from the medieval period around the world.",
-      rating: 4.3,
-      downloads: 700,
-      fileUrl: "sample-notes/medieval-history.pdf",
-      previewText: "World History: Medieval Times\n\nKey Topics:\n- Feudalism\n- The Crusades\n- Black Death\n- Renaissance beginnings"
-    },
-    {
-      id: 6,
-      title: "Macroeconomics Principles",
-      category: "Economics",
-      description: "Core ideas and models explaining national economic aggregates and policy impacts.",
-      rating: 4.0,
-      downloads: 600,
-      fileUrl: "sample-notes/macroeconomics.pdf",
-      previewText: "Macroeconomics Principles\n\nIncludes:\n- GDP\n- Inflation\n- Fiscal and Monetary Policy\n- Unemployment"
-    },
-    {
-      id: 7,
-      title: "Cell Biology Overview",
-      category: "Biology",
-      description: "Notes covering cell structure, organelles, and important biological processes.",
-      rating: 4.6,
-      downloads: 1200,
-      fileUrl: "sample-notes/cell-biology.pdf",
-      previewText: "Cell Biology Overview\n\nTopics:\n- Cell membrane\n- Nucleus\n- Mitochondria\n- Photosynthesis"
-    },
-    {
-      id: 8,
-      title: "Literature Analysis: Modern Novels",
-      category: "Literature",
-      description: "Critical summaries and reviews of major modern novels and authors.",
-      rating: 4.4,
-      downloads: 500,
-      fileUrl: "sample-notes/modern-literature.pdf",
-      previewText: "Literature Analysis: Modern Novels\n\nAnalyzed novels:\n- 1984\n- The Great Gatsby\n- To Kill a Mockingbird"
-    },
-    {
-      id: 9,
-      title: "Chemical Bonding Concepts",
-      category: "Chemistry",
-      description: "Detailed notes about ionic, covalent, and metallic bonding explained with examples.",
-      rating: 4.2,
-      downloads: 1100,
-      fileUrl: "sample-notes/chemical-bonding.pdf",
-      previewText: "Chemical Bonding Concepts\n\n- Ionic Bonds\n- Covalent Bonds\n- Metallic Bonds\nExamples included."
-    },
-    {
-      id: 10,
-      title: "Advanced Algebra Techniques",
-      category: "Mathematics",
-      description: "Notes on polynomial equations, factorization, and complex numbers.",
-      rating: 4.3,
-      downloads: 1450,
-      fileUrl: "sample-notes/advanced-algebra.pdf",
-      previewText: "Advanced Algebra Techniques\n\n- Polynomial equations\n- Factorization\n- Complex numbers\nExercises included."
-    }
-  ];
+  document.addEventListener('DOMContentLoaded', function() {
+    let notesData = [];
+    let nextNoteId = 1;
 
-  function createStarRating(rating) {
-    let fullStars = Math.floor(rating);
-    let halfStar = rating % 1 >= 0.5;
-    const maxStars = 5;
-    let starHtml = '';
-    for (let i = 0; i < fullStars; i++) {
-      starHtml += '<span aria-hidden="true">★</span>';
-    }
-    if (halfStar) {
-      starHtml += '<span aria-hidden="true">☆</span>';
-      fullStars++;
-    }
-    for (let i = fullStars; i < maxStars; i++) {
-      starHtml += '<span aria-hidden="true">☆</span>';
-    }
-    return starHtml;
-  }
+    const notesList = document.getElementById('notesList');
+    const searchBar = document.getElementById('searchBar');
+    const sortSelect = document.getElementById('sortSelect');
+    const categoryTabs = document.getElementById('categoryTabs').querySelectorAll('button');
+    const userIcon = document.getElementById('profileIcon');
+    const userDropdown = document.getElementById('userDropdown');
+    const viewToggleBtn = document.getElementById('viewToggleBtn');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+    const addNoteModalBack = document.getElementById('addNoteModalBack');
+    const addNoteModal = document.getElementById('addNoteModal');
+    const closeAddNoteBtn = document.getElementById('closeAddNoteBtn');
+    const addNoteForm = document.getElementById('addNoteForm');
+    const previewOverlay = document.getElementById('previewOverlay');
+    const previewHeader = document.getElementById('previewHeader');
+    const previewBody = document.getElementById('previewBody');
+    const previewCloseBtn = document.getElementById('previewCloseBtn');
 
-  // DOM references
-  const notesList = document.getElementById('notesList');
-  const searchBar = document.getElementById('searchBar');
-  const sortSelect = document.getElementById('sortSelect');
-  const categoryTabs = document.getElementById('categoryTabs').querySelectorAll('button');
-  const userIcon = document.getElementById('profileIcon');
-  const userDropdown = document.getElementById('userDropdown');
-  const viewToggleBtn = document.getElementById('viewToggleBtn');
+    let currentCategory = 'all';
+    let currentSearchTerm = '';
+    let currentSort = 'relevance';
+    let currentViewMode = 'grid';
+    let currentPreviewNote = null;
 
-  const previewOverlay = document.getElementById('previewOverlay');
-  const previewHeader = document.getElementById('previewHeader');
-  const previewDesc = document.getElementById('previewDesc');
-  const previewMeta = document.getElementById('previewMeta');
-  const previewStars = previewMeta.querySelector('.rating-stars');
-  const previewDownloads = previewMeta.querySelector('.downloads');
-  const previewTextPreview = document.getElementById('previewTextPreview');
-  const previewDownloadBtn = document.getElementById('previewDownloadBtn');
-  const previewCloseBtn = document.getElementById('previewCloseBtn');
-
-  // State
-  let currentCategory = 'all';
-  let currentSearchTerm = '';
-  let currentSort = 'relevance';
-  let currentPreviewNote = null;
-  let currentViewMode = 'grid'; // grid or list
-
-  // Filtering and sorting
-  function filterAndSortNotes() {
-    let filtered = notesData;
-    if (currentCategory !== 'all') {
-      filtered = filtered.filter(note => note.category === currentCategory);
-    }
-    if (currentSearchTerm.trim() !== '') {
-      const searchLower = currentSearchTerm.toLowerCase();
-      filtered = filtered.filter(note =>
-        note.title.toLowerCase().includes(searchLower) ||
-        note.category.toLowerCase().includes(searchLower) ||
-        note.description.toLowerCase().includes(searchLower)
-      );
-    }
-    switch (currentSort) {
-      case 'rating':
-        filtered = filtered.slice().sort((a, b) => b.rating - a.rating);
-        break;
-      case 'downloads':
-        filtered = filtered.slice().sort((a, b) => b.downloads - a.downloads);
-        break;
-      case 'title':
-        filtered = filtered.slice().sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      default:
-        break;
-    }
-    return filtered;
-  }
-
-  function renderNotes() {
-    const notesToShow = filterAndSortNotes();
-    if (notesToShow.length === 0) {
-      notesList.innerHTML = '<p style="text-align:center; color: #777;">No notes found matching your criteria.</p>';
-      return;
-    }
-    notesList.className = currentViewMode + '-view';
-    const notesHtml = notesToShow.map(note => {
-      let cardClasses = 'note-card ' + (currentViewMode === 'grid' ? 'grid-item' : 'list-item');
-      return `
-      <article tabindex="0" class="${cardClasses}" role="listitem" aria-label="${note.title} note card" data-id="${note.id}">
-        <h2 class="note-title">${note.title}</h2>
-        <p class="note-desc">${note.description}</p>
-        <div class="note-info">
-          <div class="rating-stars" aria-label="Rating: ${note.rating} out of 5">${createStarRating(note.rating)}</div>
-          <div aria-label="${note.downloads} downloads">${note.downloads.toLocaleString()} ⬇</div>
-        </div>
-        <button class="download-btn" aria-label="Download ${note.title} notes" data-download-id="${note.id}">Download</button>
-      </article>`;
-    }).join('');
-    notesList.innerHTML = notesHtml;
-
-    const noteCards = document.querySelectorAll('.note-card');
-    noteCards.forEach(card => {
-      card.onclick = (e) => {
-        if (e.target.classList.contains('download-btn')) return;
-        const noteId = parseInt(card.getAttribute('data-id'), 10);
-        openPreview(noteId);
-      };
-      card.onkeydown = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          card.click();
-        }
-      };
-    });
-    const downloadBtns = document.querySelectorAll('.download-btn');
-    downloadBtns.forEach(btn => {
-      btn.onclick = (e) => {
-        e.stopPropagation();
-        const downloadId = parseInt(btn.getAttribute('data-download-id'), 10);
-        downloadNote(downloadId);
-      };
-    });
-    updateViewToggleButton();
-  }
-
-  function openPreview(noteId) {
-    const note = notesData.find(n => n.id === noteId);
-    if (!note) return;
-    currentPreviewNote = note;
-    previewHeader.textContent = note.title;
-    previewDesc.textContent = note.description;
-    previewStars.innerHTML = createStarRating(note.rating);
-    previewStars.setAttribute('aria-label', `Rating: ${note.rating} out of 5`);
-    previewDownloads.textContent = `${note.downloads.toLocaleString()} downloads`;
-    previewTextPreview.textContent = note.previewText || "Preview not available.";
-    previewDownloadBtn.focus();
-    previewOverlay.classList.add('active');
-    trapFocus(previewOverlay);
-  }
-
-  function closePreview() {
-    previewOverlay.classList.remove('active');
-    currentPreviewNote = null;
-    removeTrapFocus(previewOverlay);
-    searchBar.focus();
-  }
-
-  function downloadNote(id) {
-    const note = notesData.find(n => n.id === id);
-    if (!note) return;
-    alert(`Starting download for:\n"${note.title}"\nFile URL: ${note.fileUrl}`);
-  }
-
-  function trapFocus(element) {
-    const focusablesString = 'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
-    let focusableElements = element.querySelectorAll(focusablesString);
-    focusableElements = Array.prototype.slice.call(focusableElements);
-    if (focusableElements.length === 0) return;
-    let firstFocusable = focusableElements[0];
-    let lastFocusable = focusableElements[focusableElements.length - 1];
-    function trap(e) {
-      if (e.key === 'Tab') {
-        if (e.shiftKey) {
-          if (document.activeElement === firstFocusable) {
-            e.preventDefault();
-            lastFocusable.focus();
-          }
-        } else {
-          if (document.activeElement === lastFocusable) {
-            e.preventDefault();
-            firstFocusable.focus();
-          }
-        }
+    function createStarRating(rating){
+      let fullStars = Math.floor(rating);
+      let halfStar = rating %1 >= 0.5;
+      let starHtml = '';
+      for(let i=0; i<fullStars; i++) {
+        starHtml += '<span aria-hidden="true">★</span>';
       }
-      else if (e.key === "Escape") {
-        closePreview();
-        closeUserDropdown();
+      if(halfStar){
+        starHtml += '<span aria-hidden="true">☆</span>';
+        fullStars++;
       }
+      for(let i=fullStars; i<5; i++){
+        starHtml += '<span aria-hidden="true">☆</span>';
+      }
+      return starHtml;
     }
-    element.addEventListener('keydown', trap);
-    element._trap = trap;
-  }
-  function removeTrapFocus(element) {
-    if (element._trap) {
-      element.removeEventListener('keydown', element._trap);
-      delete element._trap;
-    }
-  }
 
-  categoryTabs.forEach(button => {
-    button.addEventListener('click', () => {
-      categoryTabs.forEach(btn => {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-pressed', 'false');
+    function filterAndSortNotes(){
+      let filtered = notesData;
+      if(currentCategory !== 'all'){
+        filtered = filtered.filter(note => note.category === currentCategory);
+      }
+      if(currentSearchTerm.trim() !== ''){
+        const lower = currentSearchTerm.toLowerCase();
+        filtered = filtered.filter(note =>
+          note.topic.toLowerCase().includes(lower) ||
+          note.author.toLowerCase().includes(lower)
+        );
+      }
+      switch(currentSort){
+        case 'rating':
+          filtered = filtered.slice().sort((a,b) => b.rating - a.rating);
+          break;
+        case 'author':
+          filtered = filtered.slice().sort((a,b) => a.author.localeCompare(b.author));
+          break;
+        case 'title':
+          filtered = filtered.slice().sort((a,b) => a.topic.localeCompare(b.topic));
+          break;
+        default:
+          break;
+      }
+      return filtered;
+    }
+
+    function renderNotes(){
+      const notesToShow = filterAndSortNotes();
+      if(notesToShow.length === 0){
+        notesList.innerHTML = '<p style="text-align:center; color:#777;">No notes matched your criteria.</p>';
+        return;
+      }
+      notesList.className = currentViewMode + '-view';
+      notesList.innerHTML = notesToShow.map(note => {
+        const cardClass = currentViewMode === 'grid' ? 'grid-item' : 'list-item';
+        return `
+        <article tabindex="0" class="note-card ${cardClass}" role="listitem" aria-label="${note.topic} note" data-id="${note.id}">
+          <h2 class="note-title">${note.topic}</h2>
+          <p class="note-desc">${note.content.length > 120 ? note.content.substring(0,120)+'...' : note.content}</p>
+          <div class="note-info">
+            <div class="rating-stars" aria-label="Rating: ${note.rating} out of 5">${createStarRating(note.rating)}</div>
+            <div aria-label="Author: ${note.author}">By: ${note.author}</div>
+          </div>
+          <div class="buttons-row">
+            <button class="download-btn" aria-label="Download ${note.topic}" data-download-id="${note.id}">Download</button>
+            <button class="readnow-btn" aria-label="Read ${note.topic} now" data-read-id="${note.id}">Read Now</button>
+          </div>
+        </article>
+        `;
+      }).join('');
+      attachNoteListeners();
+      updateViewToggleButton();
+    }
+
+    function attachNoteListeners(){
+      document.querySelectorAll('.note-card').forEach(card=>{
+        card.onclick = e=>{
+          if(e.target.classList.contains('download-btn') || e.target.classList.contains('readnow-btn')) return;
+          openPreview(parseInt(card.getAttribute('data-id')));
+        };
+        card.onkeydown = e => {
+          if(e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            card.click();
+          }
+        };
       });
-      button.classList.add('active');
-      button.setAttribute('aria-pressed', 'true');
-      currentCategory = button.getAttribute('data-category');
+      document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.onclick = e => {
+          e.stopPropagation();
+          downloadNote(parseInt(btn.getAttribute('data-download-id')));
+        };
+      });
+      document.querySelectorAll('.readnow-btn').forEach(btn => {
+        btn.onclick = e => {
+          e.stopPropagation();
+          openReadNow(parseInt(btn.getAttribute('data-read-id')));
+        };
+      });
+    }
+
+    function openPreview(noteId){
+      const note = notesData.find(n => n.id === noteId);
+      if(!note) return;
+      currentPreviewNote = note;
+      previewHeader.textContent = note.topic;
+      previewBody.textContent = note.content;
+      previewOverlay.classList.add('active');
+      trapFocus(previewOverlay);
+    }
+
+    function closePreview(){
+      previewOverlay.classList.remove('active');
+      currentPreviewNote = null;
+      removeTrapFocus(previewOverlay);
+      searchBar.focus();
+    }
+
+    function openReadNow(noteId){
+      openPreview(noteId);
+    }
+
+    function downloadNote(noteId){
+      const note = notesData.find(n=>n.id === noteId);
+      if(!note){
+        alert('Note not found.');
+        return;
+      }
+      alert(`Download started for "${note.topic}". This is a demo, no actual file.`);
+    }
+
+    userIcon.addEventListener('click', toggleUserDropdown);
+    document.addEventListener('click', e=>{
+      if(!userIcon.contains(e.target) && !userDropdown.contains(e.target)) closeUserDropdown();
+    });
+    userIcon.addEventListener('keydown', e=>{
+      if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        toggleUserDropdown();
+      }
+    });
+    function toggleUserDropdown(){
+      if(userDropdown.classList.contains('show')) closeUserDropdown();
+      else openUserDropdown();
+    }
+    function openUserDropdown(){
+      userDropdown.classList.add('show');
+      userIcon.setAttribute('aria-expanded','true');
+      const first = userDropdown.querySelector('button, a');
+      if(first) first.focus();
+    }
+    function closeUserDropdown(){
+      userDropdown.classList.remove('show');
+      userIcon.setAttribute('aria-expanded','false');
+    }
+    document.getElementById('profileBtn').addEventListener('click', ()=>{alert('Profile clicked'); closeUserDropdown();});
+    document.getElementById('settingsBtn').addEventListener('click', ()=>{alert('Settings clicked'); closeUserDropdown();});
+    document.getElementById('logoutBtn').addEventListener('click', ()=>{alert('Logout clicked'); closeUserDropdown();});
+
+    viewToggleBtn.addEventListener('click', ()=>{
+      currentViewMode = currentViewMode==='grid' ? 'list' : 'grid';
       renderNotes();
     });
-  });
-
-  searchBar.addEventListener('input', e => {
-    currentSearchTerm = e.target.value;
-    renderNotes();
-  });
-
-  sortSelect.addEventListener('change', e => {
-    currentSort = e.target.value;
-    renderNotes();
-  });
-
-  previewCloseBtn.addEventListener('click', closePreview);
-  previewOverlay.addEventListener('click', (e) => {
-    if (e.target === previewOverlay) {
-      closePreview();
+    function updateViewToggleButton(){
+      if(currentViewMode==='grid'){
+        viewToggleBtn.setAttribute('aria-pressed','false');
+        viewToggleBtn.innerHTML=`
+          <svg id="viewIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+            <rect x="4" y="5" width="5" height="5"></rect>
+            <rect x="10" y="5" width="10" height="5"></rect>
+            <rect x="4" y="12" width="5" height="5"></rect>
+            <rect x="10" y="12" width="10" height="5"></rect>
+            <rect x="4" y="19" width="5" height="2"></rect>
+            <rect x="10" y="19" width="10" height="2"></rect>
+          </svg>
+          List View
+        `;
+      } else{
+        viewToggleBtn.setAttribute('aria-pressed','true');
+        viewToggleBtn.innerHTML=`
+          <svg id="viewIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+            <rect x="4" y="4" width="5" height="5"></rect>
+            <rect x="10" y="4" width="5" height="5"></rect>
+            <rect x="16" y="4" width="5" height="5"></rect>
+            <rect x="4" y="10" width="5" height="5"></rect>
+            <rect x="10" y="10" width="5" height="5"></rect>
+            <rect x="16" y="10" width="5" height="5"></rect>
+            <rect x="4" y="16" width="5" height="5"></rect>
+            <rect x="10" y="16" width="5" height="5"></rect>
+            <rect x="16" y="16" width="5" height="5"></rect>
+          </svg>
+          Grid View
+        `;
+      }
     }
-  });
 
-  // User menu toggle
-  userIcon.addEventListener('click', toggleUserDropdown);
-  // Close user menu if clicked outside
-  document.addEventListener('click', (e) => {
-    if (!userIcon.contains(e.target) && !userDropdown.contains(e.target)) {
-      closeUserDropdown();
+    addNoteBtn.addEventListener('click', ()=>{
+      addNoteModalBack.classList.add('active');
+      addNoteModal.setAttribute('aria-hidden','false');
+      addNoteModal.querySelector('input,textarea,select').focus();
+    });
+    closeAddNoteBtn.addEventListener('click', closeAddNoteModal);
+    addNoteModalBack.addEventListener('click', e=>{
+      if(e.target === addNoteModalBack) closeAddNoteModal();
+    });
+    function closeAddNoteModal(){
+      addNoteModalBack.classList.remove('active');
+      addNoteModal.setAttribute('aria-hidden','true');
+      addNoteForm.reset();
     }
-  });
-
-  // User dropdown keyboard accessible
-  userIcon.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    addNoteForm.addEventListener('submit', e=>{
       e.preventDefault();
-      toggleUserDropdown();
-    }
-  });
+      const topic=addNoteForm.topic.value.trim();
+      const author=addNoteForm.author.value.trim();
+      const category=addNoteForm.category.value;
+      const rating=parseFloat(addNoteForm.rating.value);
+      const content=addNoteForm.content.value.trim();
+      if(!topic||!author||!content||!category||isNaN(rating)||rating<1||rating>5){
+        alert('Please fill all fields correctly. Rating must be between 1 and 5 and category must be selected.');
+        return;
+      }
+      notesData.push({id: nextNoteId++, topic, author, rating, content, category});
+      renderNotes();
+      closeAddNoteModal();
+    });
 
-  function toggleUserDropdown() {
-    const isOpen = userDropdown.classList.contains('show');
-    if (isOpen) {
-      closeUserDropdown();
-    } else {
-      openUserDropdown();
-    }
-  }
-  function openUserDropdown() {
-    userDropdown.classList.add('show');
-    userIcon.setAttribute('aria-expanded', 'true');
-    // Focus first item for keyboard users
-    const firstItem = userDropdown.querySelector('button, a');
-    if (firstItem) firstItem.focus();
-  }
-  function closeUserDropdown() {
-    userDropdown.classList.remove('show');
-    userIcon.setAttribute('aria-expanded', 'false');
-  }
+    previewCloseBtn.addEventListener('click', closePreview);
+    previewOverlay.addEventListener('click', e=>{
+      if(e.target === previewOverlay) closePreview();
+    });
 
-  // User dropdown button handlers (just dummy alerts for now)
-  document.getElementById('profileBtn').addEventListener('click', () => {
-    alert('Profile clicked (feature coming soon).');
-    closeUserDropdown();
-  });
-  document.getElementById('settingsBtn').addEventListener('click', () => {
-    alert('Settings clicked (feature coming soon).');
-    closeUserDropdown();
-  });
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    alert('Logout clicked (feature coming soon).');
-    closeUserDropdown();
-  });
-
-  // View toggle button
-  viewToggleBtn.addEventListener('click', () => {
-    if (currentViewMode === 'grid') {
-      currentViewMode = 'list';
-    } else {
-      currentViewMode = 'grid';
+    function trapFocus(element){
+      const focusables = element.querySelectorAll('a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]');
+      const firstFocusable = focusables[0];
+      const lastFocusable = focusables[focusables.length - 1];
+      function handleTrap(e){
+        if(e.key==='Tab'){
+          if(e.shiftKey){
+            if(document.activeElement === firstFocusable){
+              e.preventDefault();
+              lastFocusable.focus();
+            }
+          } else {
+            if(document.activeElement === lastFocusable){
+              e.preventDefault();
+              firstFocusable.focus();
+            }
+          }
+        } else if(e.key==='Escape'){
+          if(element.id === 'previewOverlay'){
+            closePreview();
+          } else if(element.id === 'addNoteModalBack'){
+            closeAddNoteModal();
+          }
+        }
+      }
+      element.addEventListener('keydown', handleTrap);
+      element._handler = handleTrap;
     }
+    function removeTrapFocus(element){
+      if(element._handler){
+        element.removeEventListener('keydown', element._handler);
+        delete element._handler;
+      }
+    }
+
+    categoryTabs.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        categoryTabs.forEach(b=>{
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        currentCategory = btn.getAttribute('data-category');
+        renderNotes();
+      });
+    });
+
+    searchBar.addEventListener('input', e=>{
+      currentSearchTerm = e.target.value;
+      renderNotes();
+    });
+
+    sortSelect.addEventListener('change', e=>{
+      currentSort = e.target.value;
+      renderNotes();
+    });
+
     renderNotes();
+    updateViewToggleButton();
   });
-
-  function updateViewToggleButton() {
-    if (currentViewMode === 'grid') {
-      viewToggleBtn.setAttribute('aria-pressed', 'false');
-      viewToggleBtn.innerHTML = `
-        <svg id="viewIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="4" y="5" width="5" height="5"></rect><rect x="10" y="5" width="10" height="5"></rect><rect x="4" y="12" width="5" height="5"></rect><rect x="10" y="12" width="10" height="5"></rect><rect x="4" y="19" width="5" height="2"></rect><rect x="10" y="19" width="10" height="2"></rect></svg>
-        List View
-      `;
-    } else {
-      viewToggleBtn.setAttribute('aria-pressed', 'true');
-      viewToggleBtn.innerHTML = `
-        <svg id="viewIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="4" y="4" width="5" height="5"></rect><rect x="10" y="4" width="5" height="5"></rect><rect x="16" y="4" width="5" height="5"></rect><rect x="4" y="10" width="5" height="5"></rect><rect x="10" y="10" width="5" height="5"></rect><rect x="16" y="10" width="5" height="5"></rect><rect x="4" y="16" width="5" height="5"></rect><rect x="10" y="16" width="5" height="5"></rect><rect x="16" y="16" width="5" height="5"></rect></svg>
-        Grid View
-      `;
-    }
-  }
-
-  renderNotes();
 </script>
 </body>
 </html>
